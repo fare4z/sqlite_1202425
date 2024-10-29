@@ -2,10 +2,12 @@ package com.fare4z.sqlite;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -61,7 +63,34 @@ public UserAdapter(Context context, ArrayList<UserData> userList) {
                 View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_update_user, null);
                 builder.setView(dialogView);
 
-                builder.show();
+                EditText etNameUpd = dialogView.findViewById(R.id.etNameUpd);
+                EditText etPasswordUpd = dialogView.findViewById(R.id.etPasswordUpd);
+
+                etNameUpd.setText(userData.getName());
+                etPasswordUpd.setText(userData.getPassword());
+
+                builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    String updatedName = etNameUpd.getText().toString();
+                    String updatedPassword = etPasswordUpd.getText().toString();
+
+                    userData.setName(updatedName);
+                    userData.setPassword(updatedPassword);
+
+                    userDataSource.updateUserData(userData.getId(), updatedName,updatedPassword);
+                    notifyItemChanged(position);
+                    }
+                });
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.create().show();
 
             }
         });
